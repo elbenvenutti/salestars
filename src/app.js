@@ -8,7 +8,7 @@ var StarCollection = require('./StarCollection');
 var SoundManager = require('./SoundManager');
 
 var soundManager = new SoundManager();
-var starCollection = new BubbleCollection();
+var starCollection = new StarCollection();
 
 var context;
 var resizeCanvas = () => {

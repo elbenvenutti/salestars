@@ -1,6 +1,6 @@
 'use strict';
 
-var Bubble = require('./Bubble');
+var Bubble = require('./Star');
 
 var bubbles = Symbol();
 

@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "Such sound. Much stars. Wow.",
   "scripts": {
-    "test": "gulp test"
+    "build": "gulp",
+    "test": "echo no tests yet",
+    "dyson": "dyson dyson",
+    "start": "http-server dist -P http://localhost:3000"
   },
   "repository": {
     "type": "git",
@@ -32,6 +35,7 @@
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.1.1",
     "howler": "^1.1.28",
+    "http-server": "^0.9.0",
     "lodash": "^4.17.2",
     "moment": "^2.17.1",
     "rest": "^1.3.1",
