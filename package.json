@@ -1,0 +1,40 @@
+{
+  "name": "salestars",
+  "version": "0.0.1",
+  "description": "Such sound. Much stars. Wow.",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elbenvenutti/policyBubbles"
+  },
+  "keywords": [
+    "policy",
+    "bubble"
+  ],
+  "author": "Isma Perez",
+  "license": "private",
+  "bugs": {
+    "url": "https://github.com/elbenvenutti/salestars/issues"
+  },
+  "homepage": "https://github.com/elbenvenutti/salestars",
+  "devDependencies": {
+    "babel-core": "^6.3.13",
+    "babel-eslint": "^5.0.0-beta4",
+    "babel-preset-es2015": "^6.1.18",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "del": "^2.2.0",
+    "dyson": "^0.11.0",
+    "dyson-generators": "^0.1.1",
+    "faker": "^3.1.0",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.1.1",
+    "howler": "^1.1.28",
+    "lodash": "^4.17.2",
+    "moment": "^2.17.1",
+    "rest": "^1.3.1",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

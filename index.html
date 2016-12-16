@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>The Sounds of Policy Expert</title>
+        <script type="text/javascript" src="./app.js"></script>
+        <style>
+            html, body, div, span, canvas {
+                margin:0;
+                padding:0;
+            }
+            #container {
+                overflow:hidden;
+                position:relative;
+            }
+            #main {
+                z-index:0;
+                background:-o-linear-gradient(top, #040429, #257eb7);
+                background:-ms-linear-gradient(top, #040429, #257eb7);
+                background:-moz-linear-gradient(top, #040429, #257eb7);
+                background:-webkit-linear-gradient(top, #040429, #257eb7);
+                background:linear-gradient(top, #040429, #257eb7);
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#040429', EndColorStr='#257eb7');
+                -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorStr='#040429', EndColorStr='#257eb7')";
+            }
+            #mountains, #grass {
+                width:100%;
+                position:absolute;
+                bottom:0;
+            }
+            #mountains {
+                height:156px;
+                z-index:1;
+                background:url(mountains.png) repeat-x 0 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <canvas id="main"></canvas>
+            <div id="mountains"></div>
+        </div>
+    </body>
+</html>
