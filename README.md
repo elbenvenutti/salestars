@@ -1,8 +1,14 @@
 # salestars
 
-After cloning, run npm install.
+After cloning, run:
+```bash
+npm install.
+```
 
-Build it by running ``npm run build``
+Then build it by running:
+```bash
+npm run build
+```
 
 Run it with a fake backend by running, in parallell:
 

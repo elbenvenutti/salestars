@@ -5,6 +5,7 @@ const TWINKLE_RATE = 1300;
 const TEXT_SPEED = 50;
 const TEXT_TTL = 10000;
 const STAR_TTL = 120000;
+const SKYLINE_HEIGHT = 100;
 
 class Bubble {
     constructor(_policy) {
@@ -29,7 +30,7 @@ class Bubble {
 
         const getPosition = () => {
             this.x = this.x || Math.round(width * Math.random());
-            this.y = this.y || Math.round(height * Math.random());
+            this.y = this.y || Math.round(height * Math.random()) - SKYLINE_HEIGHT;
         };
 
         const life = Date.now() - this.created;

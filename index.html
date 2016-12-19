@@ -9,6 +9,9 @@
                 margin:0;
                 padding:0;
             }
+            body {
+                overflow: hidden;
+            }
             #container {
                 overflow:hidden;
                 position:relative;
@@ -23,22 +26,20 @@
                 filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#040429', EndColorStr='#257eb7');
                 -ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorStr='#040429', EndColorStr='#257eb7')";
             }
-            #mountains, #grass {
+            #skyline {
                 width:100%;
                 position:absolute;
                 bottom:0;
-            }
-            #mountains {
-                height:156px;
+                height:72px;
                 z-index:1;
-                background:url(mountains.png) repeat-x 0 0;
+                background:url(skyline.png) repeat-x 0 0;
             }
         </style>
     </head>
     <body>
         <div id="container">
             <canvas id="main"></canvas>
-            <div id="mountains"></div>
+            <div id="skyline"></div>
         </div>
     </body>
 </html>
