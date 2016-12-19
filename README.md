@@ -1,11 +1,12 @@
 # salestars
 
-After cloning, run:
+After cloning,
+
 ```bash
-npm install.
+run npm install
 ```
 
-Then build it by running:
+Build it by running 
 ```bash
 npm run build
 ```
