@@ -1,21 +1,14 @@
 'use strict';
 
-const SPEED = 30;
-const STAR_SIZE = 100;
-
-var loadBubbleImage = (colour) => {
-    var bubbleImage = new Image();
-    bubbleImage.src = `./${colour}Bubble.png`;
-    return bubbleImage;
-};
-
-var bubbleImages = [ 'green', 'orange', 'red' ].map((colour) => loadBubbleImage(colour));
+const STAR_RADIUS = 7;
+const TWINKLE_RATE = 1300;
+const TEXT_SPEED = 50;
+const TEXT_TTL = 10000;
+const STAR_TTL = 120000;
 
 class Bubble {
-    constructor(_policy, _image) {
+    constructor(_policy) {
         this.policy = _policy;
-        this.speed = SPEED / 2000 + Math.random() / SPEED;
-        this.image = _image;
         this.created = Date.now();
         this.drawExtraElements = () => {};
 
@@ -26,88 +19,125 @@ class Bubble {
         dispatchEvent(new CustomEvent('bubbleCreated', { detail: { premium: this.policy.premium } }));
     }
 
+    cleanup() {
+        dispatchEvent(new CustomEvent('destroyBubble', { detail: { bubble: this } }));
+    }
+
     draw(context) {
-        var calculateYPosition = () => {
-            var y;
-            y = Math.round(this.yy - this.speed * (Date.now() - this.created));
-            if (y < -STAR_SIZE) {
-                dispatchEvent(new CustomEvent('destroyBubble', { detail: { bubble: this } }));
-            } else if (y > this.yy) {
-                y = this.yy;
-            }
-            return y;
+        const width = context.canvas.width;
+        const height = context.canvas.height;
+
+        const getPosition = () => {
+            this.x = this.x || Math.round(width * Math.random());
+            this.y = this.y || Math.round(height * Math.random());
         };
 
-        this.width = context.canvas.width;
-        this.height = context.canvas.height;
+        const life = Date.now() - this.created;
 
-        if (!this.x) {
-            this.x = STAR_SIZE / 2 + Math.random() * (this.width - 1.5 * STAR_SIZE);
+        const drawText = () => {
+            if (life < TEXT_TTL) {
+                const textY = life / TEXT_SPEED;
+                context.save();
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = `rgba(255, 255, 255, ${0.5 * (1 - life / TEXT_TTL)})`;
+                context.font = 'bold 20px helvetica';
+                context.translate(0, -textY);
+                context.fillText(`£${this.policy.premium.toFixed(2)}`, STAR_RADIUS, -10);
+                context.font = '14px helvetica';
+                context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
+                this.drawExtraElements(context);
+                context.restore();
+            }
+        };
+
+        const drawStar = () => {
+            context.save();
+            context.translate(this.x, this.y);
+            context.beginPath();
+            context.arc(STAR_RADIUS, STAR_RADIUS, STAR_RADIUS, 0, Math.PI * 2, true);
+            context.closePath();
+            var gradientRadius = STAR_RADIUS * (1 + Math.sin((Date.now() - this.created) / TWINKLE_RATE)) / 2;
+            var gradient = context.createRadialGradient(STAR_RADIUS, STAR_RADIUS, 0, STAR_RADIUS, STAR_RADIUS, gradientRadius);
+            gradient.addColorStop(0.0, 'rgba(255,255,255,1.0)');
+            gradient.addColorStop(0.5, 'rgba(152,255,255,0.6)');
+            gradient.addColorStop(1.0, 'rgba(192,192,255,0)');
+            context.fillStyle = gradient;
+            context.fill();
+            drawText();
+            context.restore();
+        };
+
+        if (life <= STAR_TTL) {
+            getPosition();
+            drawStar();
+        } else {
+            this.cleanup();
         }
-        if (!this.yy) {
-            this.yy = STAR_SIZE / 2 + Math.random() * (this.height - 1.5 * STAR_SIZE);
-        }
-
-        var y = calculateYPosition();
-
-        var scale = 0.25 + this.policy.premium / 400;
-        var radius = 5 * (5 + Math.sin(y / 30));
-        const rrr = (STAR_SIZE / 2);
-
-        context.save();
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.scale(scale, scale);
-        console.log((Date.now() - this.created) / 1000);
-        context.fillStyle = 'rgba(255, 255, 255, ' + Math.max(5, (Date.now() - this.created) / 1000) / 5 + ')';
-        context.font = 'bold 20px helvetica';
-        context.translate(this.x / scale, y / scale);
-        context.fillText(`£${this.policy.premium.toFixed(2)}`, rrr, 40);
-        context.font = '14px helvetica';
-        context.fillText(`${this.policy.postcode}`, rrr, 60);
-        this.drawExtraElements(context);
-        context.restore();
-
-        context.save();
-        context.scale(scale, scale);
-        context.translate(this.x / scale, this.yy / scale);
-        context.beginPath();
-        context.arc(rrr, rrr, radius, 0, Math.PI * 2, true);
-        context.closePath();
-        var gradient = context.createRadialGradient(rrr, rrr, 0, rrr, rrr, radius);
-        gradient.addColorStop(0.0, 'rgba(255,255,255,1.0)');
-        gradient.addColorStop(0.5, 'rgba(152,255,255,0.6)');
-        gradient.addColorStop(1.0, 'rgba(192,192,255,0)');
-        context.fillStyle = gradient;
-        context.fill();
-        context.restore();
     }
 }
 
 class Red extends Bubble {
-    constructor(_policy) {
-        super(_policy, bubbleImages[2]);
-    }
 }
 
 class Amber extends Bubble {
     constructor(_policy) {
-        super(_policy, bubbleImages[1]);
+        super(_policy);
 
         this.drawExtraElements = (context) => {
             context.font = 'bold 16px helvetica';
-            context.fillText(this.policy.numberOfQuotes, 50, 75);
+            context.fillText(this.policy.numberOfQuotes, STAR_RADIUS, 30);
         };
     }
 }
 
+var loadBubbleImage = () => {
+    var bubbleImage = new Image();
+    bubbleImage.src = `./santa.png`;
+    return bubbleImage;
+};
+
+var santaImage = loadBubbleImage();
+
+const SANTA_WIDTH = 204;
+const SANTA_HEIGHT = 82;
+const SANTA_TTL = 10000;
+
 class Green extends Bubble {
     constructor(_policy) {
-        super(_policy, bubbleImages[0]);
+        super(_policy);
     }
 
     notify() {
         dispatchEvent(new Event('purchaseBubbleCreated'));
+    }
+
+    draw(context) {
+        this.delta = this.delta || 200 * Math.random();
+        const {width, height} = context.canvas;
+        const alpha = Math.atan((4 * height + this.delta) / width);
+        const life = Date.now() - this.created;
+
+        if (life <= SANTA_TTL) {
+            context.save();
+
+            context.globalAlpha = 0.5;
+            context.translate(width / 2, height * 2);
+            context.rotate(2 * alpha * life / SANTA_TTL - alpha);
+            context.translate(-width / 2, -height * 2);
+            context.drawImage(santaImage, (width - SANTA_WIDTH) / 2, this.delta, SANTA_WIDTH, SANTA_HEIGHT);
+
+            context.textAlign = 'center';
+            context.fillStyle = `rgba(255, 255, 255, 1)`;
+            context.font = 'bold 20px helvetica';
+            context.fillText(`£${this.policy.premium.toFixed(2)}`, 10 + width / 2, 10 + SANTA_HEIGHT + this.delta);
+            context.font = '12px helvetica';
+            context.fillText(`${this.policy.postcode}`, 10 + width / 2, 20 + SANTA_HEIGHT + this.delta);
+
+            context.restore();
+        } else {
+            this.cleanup();
+        }
     }
 }
 
