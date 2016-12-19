@@ -6,22 +6,25 @@ const TEXT_SPEED = 50;
 const TEXT_TTL = 10000;
 const STAR_TTL = 120000;
 const SKYLINE_HEIGHT = 100;
+const TEXT_DIRECTION_UP = -1;
+const TEXT_DIRECTION_DOWN = 1;
 
-class Bubble {
+class Sprite {
     constructor(_policy) {
         this.policy = _policy;
         this.created = Date.now();
         this.drawExtraElements = () => {};
+        this.textDirection = TEXT_DIRECTION_UP;
 
         this.notify();
     }
 
     notify() {
-        dispatchEvent(new CustomEvent('bubbleCreated', { detail: { premium: this.policy.premium } }));
+        dispatchEvent(new CustomEvent('spriteCreated', { detail: { premium: this.policy.premium } }));
     }
 
     cleanup() {
-        dispatchEvent(new CustomEvent('destroyBubble', { detail: { bubble: this } }));
+        dispatchEvent(new CustomEvent('destroySprite', { detail: { sprite: this } }));
     }
 
     draw(context) {
@@ -29,8 +32,8 @@ class Bubble {
         const height = context.canvas.height;
 
         const getPosition = () => {
-            this.x = this.x || Math.round(width * Math.random());
-            this.y = this.y || Math.round(height * Math.random()) - SKYLINE_HEIGHT;
+            this.x = this.x || Math.round(25 + (width - 50) * Math.random());
+            this.y = this.y || Math.round((height - SKYLINE_HEIGHT) * Math.random());
         };
 
         const life = Date.now() - this.created;
@@ -43,7 +46,7 @@ class Bubble {
                 context.textBaseline = 'middle';
                 context.fillStyle = `rgba(255, 255, 255, ${0.5 * (1 - life / TEXT_TTL)})`;
                 context.font = 'bold 20px helvetica';
-                context.translate(0, -textY);
+                context.translate(0, this.textDirection * textY);
                 context.fillText(`£${this.policy.premium.toFixed(2)}`, STAR_RADIUS, -10);
                 context.font = '14px helvetica';
                 context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
@@ -78,10 +81,15 @@ class Bubble {
     }
 }
 
-class Red extends Bubble {
+class Cancellation extends Sprite {
+    constructor(_policy) {
+        super(_policy);
+
+        this.textDirection = TEXT_DIRECTION_DOWN;
+    }
 }
 
-class Amber extends Bubble {
+class Quote extends Sprite {
     constructor(_policy) {
         super(_policy);
 
@@ -92,25 +100,25 @@ class Amber extends Bubble {
     }
 }
 
-var loadBubbleImage = () => {
-    var bubbleImage = new Image();
-    bubbleImage.src = `./santa.png`;
-    return bubbleImage;
+var loadSantaImage = () => {
+    var image = new Image();
+    image.src = `./santa.png`;
+    return image;
 };
 
-var santaImage = loadBubbleImage();
+var santaImage = loadSantaImage();
 
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;
-const SANTA_TTL = 10000;
+const SANTA_TTL = 20000;
 
-class Green extends Bubble {
+class Purchase extends Sprite {
     constructor(_policy) {
         super(_policy);
     }
 
     notify() {
-        dispatchEvent(new Event('purchaseBubbleCreated'));
+        dispatchEvent(new Event('purchaseSpriteCreated'));
     }
 
     draw(context) {
@@ -143,7 +151,7 @@ class Green extends Bubble {
 }
 
 module.exports = {
-    Red: Red,
-    Amber: Amber,
-    Green: Green
+    Cancellation,
+    Quote,
+    Purchase
 };
