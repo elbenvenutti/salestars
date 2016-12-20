@@ -57,16 +57,20 @@ var createStarsFromResponse = (response) => {
     });
 };
 
-var updatePolicyData = () => rest(`./policies?minutes=${POLLING_INTERVAL}`).then(createStarsFromResponse);
+var updatePolicyData = idToken => () => rest(`./policies?idToken=${idToken}&minutes=${POLLING_INTERVAL}`).then(createStarsFromResponse);
 
 addEventListener('spriteCreated', () => soundManager.playBells());
 addEventListener('purchaseSpriteCreated', () => soundManager.playPurchase());
 
-window.onload = () => {
+window.appStart = googleUser => {
+    const idToken = googleUser.getAuthResponse().id_token;
+
+    document.getElementById('signin').style.display = 'none';
+    document.getElementById('container').style.display = 'block';
     context = document.getElementById('main').getContext('2d');
 
     resizeCanvas();
-    updatePolicyData();
+    updatePolicyData(idToken)();
     setTimeout(animate, 0);
-    setInterval(updatePolicyData, POLLING_INTERVAL * 60000);
+    setInterval(updatePolicyData(idToken), POLLING_INTERVAL * 60000);
 };
