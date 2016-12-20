@@ -13,7 +13,6 @@ class Sprite {
     constructor(_policy) {
         this.policy = _policy;
         this.created = Date.now();
-        this.drawExtraElements = () => {};
         this.textDirection = TEXT_DIRECTION_UP;
 
         this.notify();
@@ -50,7 +49,6 @@ class Sprite {
                 context.fillText(`£${this.policy.premium.toFixed(2)}`, STAR_RADIUS, -10);
                 context.font = '14px helvetica';
                 context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
-                this.drawExtraElements(context);
                 context.restore();
             }
         };
@@ -92,11 +90,6 @@ class Cancellation extends Sprite {
 class Quote extends Sprite {
     constructor(_policy) {
         super(_policy);
-
-        this.drawExtraElements = (context) => {
-            context.font = 'bold 16px helvetica';
-            context.fillText(this.policy.numberOfQuotes, STAR_RADIUS, 30);
-        };
     }
 }
 
@@ -110,7 +103,7 @@ var santaImage = loadSantaImage();
 
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;
-const SANTA_TTL = 5000;
+const SANTA_TTL = 7000;
 
 class Purchase extends Sprite {
     constructor(_policy) {
