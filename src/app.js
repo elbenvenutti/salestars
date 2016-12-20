@@ -49,7 +49,15 @@ var createStarsFromResponse = (response) => {
 
         if (policyData.event.indexOf('purchase') > -1) {
             delay(() => starCollection.addPurchase(policy));
+        } else if (policyData.event.indexOf('new business purchase') > -1) {
+            delay(() => starCollection.addPurchase(policy));
+        } else if (policyData.event.indexOf('renewal purchase') > -1) {
+            delay(() => starCollection.addPurchase(policy));
         } else if (policyData.event.indexOf('cancel') > -1) {
+            delay(() => starCollection.addCancellation(policy));
+        } else if (policyData.event.indexOf('new business cancel') > -1) {
+            delay(() => starCollection.addCancellation(policy));
+        } else if (policyData.event.indexOf('renewal cancel') > -1) {
             delay(() => starCollection.addCancellation(policy));
         } else {
             delay(() => starCollection.addQuote(policy));

@@ -110,7 +110,7 @@ var santaImage = loadSantaImage();
 
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;
-const SANTA_TTL = 20000;
+const SANTA_TTL = 5000;
 
 class Purchase extends Sprite {
     constructor(_policy) {
@@ -122,18 +122,22 @@ class Purchase extends Sprite {
     }
 
     draw(context) {
-        this.delta = this.delta || 200 * Math.random();
         const {width, height} = context.canvas;
-        const alpha = Math.atan((4 * height + this.delta) / width);
+        this.delta = this.delta || height / 3 * Math.random();
+        this.gamma = this.gamma || 3 * width / 4 * Math.random();
+        this.rotationCenterX = this.rotationCenterX || width / 4 + this.gamma;
+        this.rotationCenterY = this.rotationCenterY || height * 2 + this.delta;
+        const alpha = - Math.atan(this.rotationCenterX / this.rotationCenterY);
+        const beta = Math.atan((width - this.rotationCenterX) / this.rotationCenterY) + Math.PI / 6;
         const life = Date.now() - this.created;
 
         if (life <= SANTA_TTL) {
             context.save();
 
             context.globalAlpha = 0.5;
-            context.translate(width / 2, height * 2);
-            context.rotate(2 * alpha * life / SANTA_TTL - alpha);
-            context.translate(-width / 2, -height * 2);
+            context.translate(this.rotationCenterX, this.rotationCenterY);
+            context.rotate((beta - alpha) * life / SANTA_TTL + alpha);
+            context.translate(-this.rotationCenterX, -this.rotationCenterY);
             context.drawImage(santaImage, (width - SANTA_WIDTH) / 2, this.delta, SANTA_WIDTH, SANTA_HEIGHT);
 
             context.textAlign = 'center';
