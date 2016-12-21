@@ -15,10 +15,12 @@ const secondaryCanvas = document.createElement('canvas');
 const secondaryContext = secondaryCanvas.getContext('2d');
 
 var resizeCanvas = () => {
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
-    secondaryContext.canvas.width = window.innerWidth;
-    secondaryContext.canvas.height = window.innerHeight;
+    if (context && secondaryContext) {
+        context.canvas.width = window.innerWidth;
+        context.canvas.height = window.innerHeight;
+        secondaryContext.canvas.width = window.innerWidth;
+        secondaryContext.canvas.height = window.innerHeight;
+    }
 };
 addEventListener('resize', resizeCanvas, false);
 

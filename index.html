@@ -9,6 +9,7 @@
             html, body, div, span, canvas {
                 margin:0;
                 padding:0;
+                font-family: Helvetica, sans-serif;
             }
             body {
                 overflow: hidden;
@@ -52,6 +53,13 @@
                 width: 120px;
                 margin: auto;
             }
+            #controls {
+                position: absolute;
+                z-index:10;
+                top: 0;
+                right: 0;
+                color: white;
+            }
         </style>
     </head>
     <body>
@@ -59,6 +67,12 @@
             <div class="g-signin2" data-onsuccess="appStart"></div>
         </div>
         <div id="container">
+            <div id="controls">
+                <div class="inner">
+                    Shut up, Santa! <input type="checkbox"><br>
+                    That does not ring any bell <input type="checkbox">
+                </div>
+            </div>
             <canvas id="main"></canvas>
             <div id="skyline"></div>
             <div id="logo"></div>
