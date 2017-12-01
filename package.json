@@ -3,11 +3,14 @@
   "version": "0.0.1",
   "description": "Such sound. Much stars. Wow.",
   "scripts": {
-    "build": "gulp",
+    "clean": "rimraf dist/**/*",
+    "copy": "copy \"{index.html,images/**/*,policies,sounds/**/*}\" dist",
+    "build": "yarn run clean && yarn copy && webpack",
+    "compile": "webpack",
     "test": "echo no tests yet",
     "dyson": "dyson dyson",
     "start": "http-server dist -P http://localhost:3000",
-    "watch": "nodemon --exec 'npm run build && npm start' -w src"
+    "watch": "nodemon --exec 'yarn build && yarn start' -w src"
   },
   "repository": {
     "type": "git",
@@ -27,20 +30,17 @@
     "babel-core": "^6.3.13",
     "babel-eslint": "^5.0.0-beta4",
     "babel-preset-es2015": "^6.1.18",
-    "babelify": "^7.2.0",
-    "browserify": "^12.0.1",
-    "del": "^2.2.0",
+    "copy": "^0.3.1",
     "dyson": "^0.11.0",
-    "dyson-generators": "^0.1.1",
+    "dyson-generators": "^0.2.0",
     "faker": "^3.1.0",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.1.1",
     "howler": "^1.1.28",
     "http-server": "^0.9.0",
     "lodash": "^4.17.2",
     "moment": "^2.17.1",
     "nodemon": "^1.11.0",
-    "rest": "^1.3.1",
-    "vinyl-source-stream": "^1.1.0"
+    "rest": "^2.0.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^3.9.1"
   }
 }

@@ -95,7 +95,7 @@ class Quote extends Sprite {
 
 var loadSantaImage = () => {
     var image = new Image();
-    image.src = `./santa.png`;
+    image.src = `./images/santa.png`;
     return image;
 };
 

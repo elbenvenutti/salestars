@@ -3,19 +3,19 @@
 After cloning, run:
 
 ```bash
-npm install
+yarn install
 ```
 
 Build it:
 ```bash
-npm run build
+yarn build
 ```
 
 Run it with a fake backend by running, in parallell:
 
 ```bash
-npm run dyson
-npm start
+yarn dyson
+yarn start
 ```
 
 Point your browser to http://localhost:8080
