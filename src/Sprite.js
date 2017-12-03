@@ -93,13 +93,13 @@ class Quote extends Sprite {
     }
 }
 
-var loadSantaImage = () => {
+const loadSantaImage = () => {
     var image = new Image();
     image.src = `./images/santa.png`;
     return image;
 };
 
-var santaImage = loadSantaImage();
+const santaImage = loadSantaImage();
 
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;

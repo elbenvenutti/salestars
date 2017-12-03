@@ -2,19 +2,19 @@
 
 const POLLING_INTERVAL = 1;
 
-var rest = require('rest');
+const rest = require('rest');
 
-var SpriteCollection = require('./SpriteCollection');
-var SoundManager = require('./SoundManager');
+const SpriteCollection = require('./SpriteCollection');
+const SoundManager = require('./SoundManager');
 
-var soundManager = new SoundManager();
-var starCollection = new SpriteCollection();
+const soundManager = new SoundManager();
+const starCollection = new SpriteCollection();
 
 var context;
 const secondaryCanvas = document.createElement('canvas');
 const secondaryContext = secondaryCanvas.getContext('2d');
 
-var resizeCanvas = () => {
+const resizeCanvas = () => {
     context.canvas.width = window.innerWidth;
     context.canvas.height = window.innerHeight;
     secondaryContext.canvas.width = window.innerWidth;
@@ -23,7 +23,7 @@ var resizeCanvas = () => {
 addEventListener('resize', resizeCanvas, false);
 
 var drawFrame;
-var animate = () => window.requestAnimationFrame(drawFrame);
+const animate = () => window.requestAnimationFrame(drawFrame);
 drawFrame = () => {
     context.clearRect(0, 0, secondaryContext.canvas.width, secondaryContext.canvas.height);
     secondaryContext.clearRect(0, 0, secondaryContext.canvas.width, secondaryContext.canvas.height);
@@ -34,9 +34,9 @@ drawFrame = () => {
     animate();
 };
 
-var createStarsFromResponse = (response) => {
-    var data = JSON.parse(response.entity);
-    var minDate = data.reduce((a, b) => a ? Math.min(a, Date.parse(b.created)) : Date.parse(b.created));
+const createStarsFromResponse = response => {
+    const data = JSON.parse(response.entity);
+    const minDate = data.reduce((a, b) => a ? Math.min(a, Date.parse(b.created)) : Date.parse(b.created));
     data.forEach((policyData) => {
         var policy = {
             premium: parseFloat(policyData.premium.replace(/[£,]/g, '')),
@@ -44,8 +44,8 @@ var createStarsFromResponse = (response) => {
             numberOfQuotes: policyData.number_of_quotes
         };
 
-        var spriteDelay = Date.parse(policyData.created) - minDate;
-        var delay = delayedFunction => setTimeout(delayedFunction, spriteDelay);
+        const spriteDelay = Date.parse(policyData.created) - minDate;
+        const delay = delayedFunction => setTimeout(delayedFunction, spriteDelay);
 
         if (policyData.event.indexOf('purchase') > -1) {
             delay(() => starCollection.addPurchase(policy));
@@ -57,7 +57,7 @@ var createStarsFromResponse = (response) => {
     });
 };
 
-var updatePolicyData = idToken => () => rest(`./policies?idToken=${idToken}&minutes=${POLLING_INTERVAL}`).then(createStarsFromResponse);
+const updatePolicyData = idToken => () => rest(`./policies?idToken=${idToken}&minutes=${POLLING_INTERVAL}`).then(createStarsFromResponse);
 
 addEventListener('spriteCreated', () => soundManager.playBells());
 addEventListener('purchaseSpriteCreated', () => soundManager.playPurchase());
