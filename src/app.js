@@ -61,6 +61,7 @@ var updatePolicyData = idToken => () => rest(`./policies?idToken=${idToken}&minu
 
 addEventListener('spriteCreated', () => soundManager.playBells());
 addEventListener('purchaseSpriteCreated', () => soundManager.playPurchase());
+addEventListener('enquirySpriteCreated', () => soundManager.playElf());
 
 window.appStart = googleUser => {
     const idToken = googleUser.getAuthResponse().id_token;
