@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash/fp');
+
 const STAR_RADIUS = 7;
 const TWINKLE_RATE = 1300;
 const TEXT_SPEED = 50;
@@ -9,11 +11,24 @@ const SKYLINE_HEIGHT = 100;
 const TEXT_DIRECTION_UP = -1;
 const TEXT_DIRECTION_DOWN = 1;
 
+const ELF_COUNT = 26;
+const ELF_WIDTH = 45;
+const ELF_HEIGHT = 105.5;
+const ELF_TTL = 2500;
+
+const elfs = _.range(0, ELF_COUNT).map(index => {
+    const image = new Image();
+    image.src = `./ElfPNGs/elf${index + 1}.png`;
+    return image;
+});
+
 class Sprite {
     constructor(_policy) {
         this.policy = _policy;
         this.created = Date.now();
         this.textDirection = TEXT_DIRECTION_UP;
+
+        this.elf = elfs[Math.floor(Math.random() * ELF_COUNT)];
 
         this.notify();
     }
@@ -53,9 +68,19 @@ class Sprite {
             }
         };
 
+        const drawElf = () => {
+            if (life < ELF_TTL) {
+                context.save();
+                context.globalAlpha = Math.sin(0.9 * Math.PI * life / ELF_TTL);
+                context.drawImage(this.elf, -ELF_WIDTH / 1.5, 0, ELF_WIDTH, ELF_HEIGHT);
+                context.restore();
+            }
+        };
+
         const drawStar = () => {
             context.save();
             context.translate(this.x, this.y);
+            drawElf();
             context.beginPath();
             context.arc(STAR_RADIUS, STAR_RADIUS, STAR_RADIUS, 0, Math.PI * 2, true);
             context.closePath();
@@ -75,7 +100,7 @@ class Sprite {
             drawStar();
         } else {
             this.cleanup();
-        }
+        };
     }
 }
 
@@ -91,11 +116,16 @@ class Quote extends Sprite {
     constructor(_policy) {
         super(_policy);
     }
+
+    notify() {
+        super.notify();
+        dispatchEvent(new Event('enquirySpriteCreated'));
+    }
 }
 
 const loadSantaImage = () => {
     var image = new Image();
-    image.src = `./images/santa.png`;
+    image.src = `./images/santadam.png`;
     return image;
 };
 
@@ -103,7 +133,8 @@ const santaImage = loadSantaImage();
 
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;
-const SANTA_TTL = 7000;
+const SANTA_SPEED = 0.8;
+const SANTA_TTL = 10000;
 
 class Purchase extends Sprite {
     constructor(_policy) {
@@ -127,9 +158,9 @@ class Purchase extends Sprite {
         if (life <= SANTA_TTL) {
             context.save();
 
-            context.globalAlpha = 0.5;
+            context.globalAlpha = 0.8;
             context.translate(this.rotationCenterX, this.rotationCenterY);
-            context.rotate((beta - alpha) * life / SANTA_TTL + alpha);
+            context.rotate(SANTA_SPEED * (beta - alpha) * life / SANTA_TTL + alpha);
             context.translate(-this.rotationCenterX, -this.rotationCenterY);
             context.drawImage(santaImage, (width - SANTA_WIDTH) / 2, this.delta, SANTA_WIDTH, SANTA_HEIGHT);
 
