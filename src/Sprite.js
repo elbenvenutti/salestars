@@ -22,13 +22,21 @@ const elfs = _.range(0, ELF_COUNT).map(index => {
     return image;
 });
 
+const GRINCH_WIDTH = 161 / 2;
+const GRINCH_HEIGHT = 279 / 2;
+const GRINCH_TTL = 2500;
+
+const grinchImage = (() => {
+    var image = new Image();
+    image.src = `./images/Grinch.png`;
+    return image;
+})();
+
 class Sprite {
     constructor(_policy) {
         this.policy = _policy;
         this.created = Date.now();
         this.textDirection = TEXT_DIRECTION_UP;
-
-        this.elf = elfs[Math.floor(Math.random() * ELF_COUNT)];
 
         this.notify();
     }
@@ -40,6 +48,10 @@ class Sprite {
     cleanup() {
         dispatchEvent(new CustomEvent('destroySprite', { detail: { sprite: this } }));
     }
+
+    drawElf() {}
+
+    drawGrinch() {}
 
     draw(context) {
         const width = context.canvas.width;
@@ -56,6 +68,7 @@ class Sprite {
             if (life < TEXT_TTL) {
                 const textY = life / TEXT_SPEED;
                 context.save();
+                this.drawGrinch(context, life);
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
                 context.fillStyle = `rgba(255, 255, 255, ${0.5 * (1 - life / TEXT_TTL)})`;
@@ -68,19 +81,10 @@ class Sprite {
             }
         };
 
-        const drawElf = () => {
-            if (life < ELF_TTL) {
-                context.save();
-                context.globalAlpha = Math.sin(0.9 * Math.PI * life / ELF_TTL);
-                context.drawImage(this.elf, -ELF_WIDTH / 1.5, 0, ELF_WIDTH, ELF_HEIGHT);
-                context.restore();
-            }
-        };
-
         const drawStar = () => {
             context.save();
             context.translate(this.x, this.y);
-            drawElf();
+            this.drawElf(context, life);
             context.beginPath();
             context.arc(STAR_RADIUS, STAR_RADIUS, STAR_RADIUS, 0, Math.PI * 2, true);
             context.closePath();
@@ -110,17 +114,37 @@ class Cancellation extends Sprite {
 
         this.textDirection = TEXT_DIRECTION_DOWN;
     }
+
+    drawGrinch(context, life) {
+        if (life < GRINCH_TTL) {
+            context.save();
+            context.globalAlpha = Math.sin(0.9 * Math.PI * life / GRINCH_TTL);
+            context.drawImage(grinchImage, -GRINCH_WIDTH / 1.5, 0, GRINCH_WIDTH, GRINCH_HEIGHT);
+            context.restore();
+        }
+    }
 }
 
 class Quote extends Sprite {
     constructor(_policy) {
         super(_policy);
+
+        this.elf = elfs[Math.floor(Math.random() * ELF_COUNT)];
     }
 
     notify() {
         super.notify();
         dispatchEvent(new Event('enquirySpriteCreated'));
     }
+
+    drawElf(context, life) {
+        if (life < ELF_TTL) {
+            context.save();
+            context.globalAlpha = Math.sin(0.9 * Math.PI * life / ELF_TTL);
+            context.drawImage(this.elf, -ELF_WIDTH / 1.5, 0, ELF_WIDTH, ELF_HEIGHT);
+            context.restore();
+        }
+    };
 }
 
 const loadSantaImage = () => {

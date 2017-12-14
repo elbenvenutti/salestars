@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copy": "copy \"{index.html,images/**/*,policies,sounds/**/*,~/Dropbox/X-mas/ElfVoices/*}\" dist",
-    "link": "ln -s ~/Dropbox/xmas2017/ElfVoices dist && ln -s ~/Dropbox/xmas2017/ElfPNGs dist && ln -s ~/Dropbox/xmas2017/santadam.png dist/images",
+    "link": "ln -s ~/Dropbox/xmas2017/ElfVoices dist && ln -s ~/Dropbox/xmas2017/ElfPNGs dist && ln -s ~/Dropbox/xmas2017/santadam.png dist/images && ln -s ~/Dropbox/xmas2017/Grinch.png dist/images",
     "build": "yarn run clean && yarn copy && yarn run link && webpack",
     "compile": "webpack",
     "test": "echo no tests yet",
