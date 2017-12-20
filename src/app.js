@@ -47,10 +47,11 @@ const createStarsFromResponse = response => {
         const spriteDelay = Date.parse(policyData.created) - minDate;
         const delay = delayedFunction => setTimeout(delayedFunction, spriteDelay);
 
-        if (policyData.event.indexOf('purchase') > -1) {
-            delay(() => starCollection.addPurchase(policy));
-        } else if (policyData.event.indexOf('cancel') > -1) {
+        if (policyData.event.indexOf('cancelled') > -1) {
             delay(() => starCollection.addCancellation(policy));
+        } else if (policyData.event.indexOf('policy') > -1) {
+            const addPurchase = policyData.event.indexOf('renewal') > -1 ? 'addAltPurchase' : 'addPurchase';
+            delay(() => starCollection[addPurchase](policy));
         } else {
             delay(() => starCollection.addQuote(policy));
         }
@@ -62,6 +63,7 @@ const updatePolicyData = idToken => () => rest(`./policies?idToken=${idToken}&mi
 addEventListener('spriteCreated', () => soundManager.playBells());
 addEventListener('purchaseSpriteCreated', () => soundManager.playPurchase());
 addEventListener('enquirySpriteCreated', () => soundManager.playElf());
+addEventListener('cancellationSpriteCreated', () => soundManager.playGrinch());
 
 window.appStart = googleUser => {
     const idToken = googleUser.getAuthResponse().id_token;

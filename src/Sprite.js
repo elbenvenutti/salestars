@@ -24,11 +24,17 @@ const elfs = _.range(0, ELF_COUNT).map(index => {
 
 const GRINCH_WIDTH = 161 / 2;
 const GRINCH_HEIGHT = 279 / 2;
-const GRINCH_TTL = 2500;
+const GRINCH_TTL = 6000;
 
 const grinchImage = (() => {
     var image = new Image();
     image.src = `./images/Grinch.png`;
+    return image;
+})();
+
+const altGrinchImage = (() => {
+    var image = new Image();
+    image.src = `./images/paulGrinch.png`;
     return image;
 })();
 
@@ -53,6 +59,14 @@ class Sprite {
 
     drawGrinch() {}
 
+    details(context, textY) {
+        context.font = 'bold 20px helvetica';
+        context.translate(0, this.textDirection * textY);
+        context.fillText(`£${this.policy.premium.toFixed(2)}`, STAR_RADIUS, -10);
+        context.font = '14px helvetica';
+        context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
+    }
+
     draw(context) {
         const width = context.canvas.width;
         const height = context.canvas.height;
@@ -72,11 +86,7 @@ class Sprite {
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
                 context.fillStyle = `rgba(255, 255, 255, ${0.5 * (1 - life / TEXT_TTL)})`;
-                context.font = 'bold 20px helvetica';
-                context.translate(0, this.textDirection * textY);
-                context.fillText(`£${this.policy.premium.toFixed(2)}`, STAR_RADIUS, -10);
-                context.font = '14px helvetica';
-                context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
+                this.details(context, textY);
                 context.restore();
             }
         };
@@ -115,13 +125,33 @@ class Cancellation extends Sprite {
         this.textDirection = TEXT_DIRECTION_DOWN;
     }
 
+    notify() {
+        dispatchEvent(new Event('cancellationSpriteCreated'));
+    }
+
+    getGrinch() {
+        return grinchImage;
+    }
+
     drawGrinch(context, life) {
         if (life < GRINCH_TTL) {
             context.save();
             context.globalAlpha = Math.sin(0.9 * Math.PI * life / GRINCH_TTL);
-            context.drawImage(grinchImage, -GRINCH_WIDTH / 1.5, 0, GRINCH_WIDTH, GRINCH_HEIGHT);
+            context.drawImage(this.getGrinch(), -GRINCH_WIDTH / 1.5, 0, GRINCH_WIDTH, GRINCH_HEIGHT);
             context.restore();
         }
+    }
+
+    details(context, textY) {
+        context.font = 'bold 20px helvetica';
+        context.translate(0, this.textDirection * textY);
+        context.fillText(`${this.policy.postcode}`, STAR_RADIUS, 10);
+    }
+}
+
+class AltCancellation extends Cancellation {
+    getGrinch() {
+        return altGrinchImage;
     }
 }
 
@@ -155,6 +185,12 @@ const loadSantaImage = () => {
 
 const santaImage = loadSantaImage();
 
+const altSantaImage = (() => {
+    var image = new Image();
+    image.src = `./images/santoni.png`;
+    return image;
+})();
+
 const SANTA_WIDTH = 204;
 const SANTA_HEIGHT = 82;
 const SANTA_SPEED = 0.8;
@@ -167,6 +203,10 @@ class Purchase extends Sprite {
 
     notify() {
         dispatchEvent(new Event('purchaseSpriteCreated'));
+    }
+
+    getSanta() {
+        return santaImage;
     }
 
     draw(context) {
@@ -186,13 +226,13 @@ class Purchase extends Sprite {
             context.translate(this.rotationCenterX, this.rotationCenterY);
             context.rotate(SANTA_SPEED * (beta - alpha) * life / SANTA_TTL + alpha);
             context.translate(-this.rotationCenterX, -this.rotationCenterY);
-            context.drawImage(santaImage, (width - SANTA_WIDTH) / 2, this.delta, SANTA_WIDTH, SANTA_HEIGHT);
+            context.drawImage(this.getSanta(), (width - SANTA_WIDTH) / 2, this.delta, SANTA_WIDTH, SANTA_HEIGHT);
 
             context.textAlign = 'center';
             context.fillStyle = `rgba(255, 255, 255, 1)`;
             context.font = 'bold 20px helvetica';
-            context.fillText(`£${this.policy.premium.toFixed(2)}`, 10 + width / 2, 10 + SANTA_HEIGHT + this.delta);
-            context.font = '12px helvetica';
+            // context.fillText(`£${this.policy.premium.toFixed(2)}`, 10 + width / 2, 10 + SANTA_HEIGHT + this.delta);
+            // context.font = '12px helvetica';
             context.fillText(`${this.policy.postcode}`, 10 + width / 2, 20 + SANTA_HEIGHT + this.delta);
 
             context.restore();
@@ -202,8 +242,16 @@ class Purchase extends Sprite {
     }
 }
 
+class AltPurchase extends Purchase {
+    getSanta() {
+        return altSantaImage;
+    }
+}
+
 module.exports = {
     Cancellation,
+    AltCancellation,
     Quote,
-    Purchase
+    Purchase,
+    AltPurchase
 };
